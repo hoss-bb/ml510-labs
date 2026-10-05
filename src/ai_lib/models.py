@@ -12,6 +12,22 @@ class ExternalCallError(RuntimeError):
     """An external service returned unusable evidence or an incomplete response."""
 
 
+def expected_call_error(error):
+    """Recognize service boundaries without swallowing ordinary programming bugs."""
+    from httpx import HTTPError
+    from requests import RequestException
+    from langchain_core.exceptions import OutputParserException
+    from google.genai.errors import APIError
+    from groq import APIError as GroqError
+    from langgraph.errors import GraphRecursionError
+    from pydantic import ValidationError
+    return isinstance(error, (ExternalCallError, HTTPError, RequestException,
+        APIError, GroqError, OutputParserException, GraphRecursionError,
+        ValidationError, TimeoutError, ConnectionError)) or any(
+            cls.__module__.startswith("cohere.errors")
+            or cls.__module__ == "langchain.agents.structured_output"
+            for cls in type(error).__mro__)
+
 
 @dataclass(frozen=True)
 class ModelSettings:

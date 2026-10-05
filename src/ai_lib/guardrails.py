@@ -1,4 +1,5 @@
 """Enforce search boundaries before execution and inspect returned evidence."""
+import re
 from urllib.parse import urlsplit
 
 from langchain_core.documents import Document
@@ -73,3 +74,8 @@ def validate_tool_calls(calls, tool_name, *, limit=2):
             raise ValueError("Tool calls need unique nonempty IDs.")
         seen.add(identifier)
         validate_search(call.get("args"))
+
+
+def redact_email(text):
+    """Request-wide teaching rule; not a general personal-data detector."""
+    return re.sub(r"[A-Za-z0-9_.+%-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", "[REDACTED_EMAIL]", text)

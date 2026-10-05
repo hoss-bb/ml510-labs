@@ -17,7 +17,7 @@ def main():
     failures = []
     if sys.version_info[:2] not in {(3, 12), (3, 13)} or struct.calcsize("P") * 8 != 64:
         failures.append("Use standard 64-bit Python 3.12 (or supported 3.13).")
-    for name in ["numpy", "scipy", "pandas", "sklearn", "seaborn", "matplotlib", "ml_lib", "lab_helpers", "nbformat", "nbclient", "ipykernel", "jupyterlab", "ai_lib", "langchain_core", "langgraph", "langchain_google_genai", "langchain_groq", "langchain_cohere", "langchain_tavily", "rank_bm25", "fastembed", "qdrant_client", "dotenv"]:
+    for name in ["numpy", "scipy", "pandas", "sklearn", "seaborn", "matplotlib", "ml_lib", "lab_helpers", "nbformat", "nbclient", "ipykernel", "jupyterlab", "ai_lib", "langchain_core", "langgraph", "langchain_google_genai", "langchain_groq", "langchain_cohere", "langchain_tavily", "rank_bm25", "fastembed", "qdrant_client", "dotenv", "langchain", "langsmith", "openevals"]:
         try:
             module = importlib.import_module(name)
             print("OK", name, getattr(module, "__version__", "importable"))

@@ -26,5 +26,10 @@ qdrant-client==1.19.1
 rank-bm25==0.2.2
 python-dotenv==1.2.4
 
+# S9: local evaluation and native agent middleware.
+langchain==1.4.3
+openevals==0.2.0
+langsmith==0.14.4
+
 # Install the local course packages in editable mode.
 -e .

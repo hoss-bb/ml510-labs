@@ -10,7 +10,7 @@ from nbclient import NotebookClient
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--lab", choices=["s4", "s5", "s6", "s7", "s8"], default="s4")
+    parser.add_argument("--lab", choices=["s4", "s5", "s6", "s7", "s8", "s9"], default="s4")
     parser.add_argument("--scope", choices=["core", "all"], default=None,
                         help="S4 defaults to core (00-03); other sessions run all stages.")
     parser.add_argument("--kernel", default="ml510")
@@ -50,7 +50,14 @@ def main():
                  "03_conversation.ipynb", "04_tools.ipynb", "05_graphs.ipynb"]
         if args.timeout is None:
             timeout = 1800
-    folder = {"s4": "s4_regression", "s5": "s5_classification", "s6": "s6_unsupervised", "s7": "s7_evaluation", "s8": "s8_assistant"}[args.lab]
+    if args.lab == "s9":
+        if scope != "all":
+            parser.error("S9 follows all six stages; use --scope all.")
+        names = ["00_start_here.ipynb", "01_evaluation_cases.ipynb", "02_rag_evaluation.ipynb",
+                 "03_improve_rag.ipynb", "04_guardrails.ipynb", "05_controlled_assistant.ipynb"]
+        if args.timeout is None:
+            timeout = 7200
+    folder = {"s4": "s4_regression", "s5": "s5_classification", "s6": "s6_unsupervised", "s7": "s7_evaluation", "s8": "s8_assistant", "s9": "s9_evaluation"}[args.lab]
     files = [root / "notebooks" / folder / name for name in names]
     missing = [path.name for path in files if not path.is_file()]
     if missing:
@@ -82,12 +89,13 @@ def main():
         environment = dict(os.environ)
         environment.pop("ML510_S5_SOURCE_RUN", None)
         environment.pop("ML510_S6_SOURCE_RUN", None)
-        handoff_start = 3 if args.lab == "s5" else 4
+        environment.pop("ML510_S9_SOURCE_RUN", None)
+        handoff_start = 1 if args.lab == "s9" else (3 if args.lab == "s5" else 4)
         handoff_variable = f"ML510_{args.lab.upper()}_SOURCE_RUN"
-        if args.lab in {"s5", "s6"}:
+        if args.lab in {"s5", "s6", "s9"}:
             if phase >= handoff_start:
                 environment[handoff_variable] = previous_run
-        if args.lab in {"s5", "s6", "s7"}:
+        if args.lab in {"s5", "s6", "s7", "s9"}:
             # Read the run created by this kernel, never a directory named "latest".
             book.cells.append(nbformat.v4.new_code_cell("import json\nprint(json.dumps(str(run.directory)))"))
         started = perf_counter()
@@ -96,7 +104,7 @@ def main():
         client = NotebookClient(book, kernel_name=args.kernel, timeout=timeout,
                                 resources={"metadata": {"path": str(root)}}, on_cell_executed=checkpoint)
         client.execute(env=environment)
-        if args.lab in {"s5", "s6", "s7"}:
+        if args.lab in {"s5", "s6", "s7", "s9"}:
             capture = book.cells.pop()
             text = "".join(o.get("text", "") for o in capture.outputs if o.output_type == "stream").strip()
             previous_run = json.loads(text)

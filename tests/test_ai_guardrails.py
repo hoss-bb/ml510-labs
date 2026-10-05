@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import Mock
 from ai_lib.models import ExternalCallError
-from ai_lib.guardrails import validate_search, search_documents, restricted_search
+from ai_lib.guardrails import validate_search, search_documents, restricted_search, redact_email
 
 
 class GuardrailTests(unittest.TestCase):
@@ -28,6 +28,9 @@ class GuardrailTests(unittest.TestCase):
         with self.assertRaises(ValueError): restricted_search({"query":"x", "max_results":99},tool)
         tool.invoke.assert_not_called()
 
+    def test_request_redaction(self):
+        self.assertEqual(redact_email("Help a@example.org"), "Help [REDACTED_EMAIL]")
+        self.assertEqual(redact_email("Reset an API key"), "Reset an API key")
 
 
 class AdditionalBoundaryTests(unittest.TestCase):
