@@ -13,8 +13,9 @@ Practical labs for learning to frame business problems, prepare data, build mode
 | S6 — Unsupervised operating-pattern discovery | Compressor regimes, reconstruction, anomaly evidence, and maintenance inspection | [Setup and lab guide](docs/s6_unsupervised.md) |
 | S7 - Evaluation and experimentation | Five practical checks: validation, learning curves, group errors, behavioral expectations and decision guardrails | [Setup and lab guide](docs/s7_evaluation.md) |
 | S8 - AI application capabilities | Prompts, RAG, conversation, tools, and graphs | [Setup and lab guide](docs/s8_assistant.md) |
+| S9 - AI evaluation and controls | Answer quality, RAG diagnosis, guardrails, and middleware | [Setup and lab guide](docs/s9_evaluation.md) |
 
-Notebook assignments are provided through the course Moodle, not GitHub. Download the lab folder (`s4_regression`, `s5_classification`, `s6_unsupervised`, `s7_evaluation`, or `s8_assistant`), extract it if zipped, and copy it into `notebooks/`. See the [notebook placement instructions](notebooks/README.md), then follow the relevant guide for installation and data preparation.
+Notebook assignments are provided through the course Moodle, not GitHub. Download the lab folder (`s4_regression`, `s5_classification`, `s6_unsupervised`, `s7_evaluation`, `s8_assistant`, or `s9_evaluation`), extract it if zipped, and copy it into `notebooks/`. See the [notebook placement instructions](notebooks/README.md), then follow the relevant guide for installation and data preparation.
 
 ## Repository map
 

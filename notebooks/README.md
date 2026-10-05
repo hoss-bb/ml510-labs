@@ -29,3 +29,7 @@ For Session 7, follow the [S7 guide](../docs/s7_evaluation.md). Also copy the Mo
 Download `s8_assistant` from Moodle and copy it into this folder. Open
 `s8_assistant/00_start_here.ipynb` locally after following the [S8 guide](../docs/s8_assistant.md).
 Keep the root `.env` and its keys out of notebook delivery archives.
+
+## S9
+
+Download `s9_evaluation` from Moodle and place it directly in this folder. Open `s9_evaluation/00_start_here.ipynb` locally and follow the [S9 guide](../docs/s9_evaluation.md).
