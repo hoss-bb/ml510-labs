@@ -144,6 +144,10 @@ Every notebook prepares its own state and reuses the saved retrieval indexes.
 | 05 — Graphs | State, nodes, conditional edges, execution | Continue after clarification and stop explicitly |
 
 Predict before running each check. Complete the embedded TODOs; nothing is submitted.
+Notebook 02 distinguishes the six first-turn comparisons from its optional Cloudant
+follow-up example. State which query you change and use only information supplied
+by the user or preceding conversation. In notebook 04, keep the complete user message
+unchanged when comparing tool descriptions.
 In notebooks 03 and 05, set `retrieval_method = "bm25_local"` (the default) or
 `"qdrant"` in the setup cell. Choose separately in each notebook; no earlier kernel
 state is needed. Qdrant requires the completed collection imported from Moodle or
