@@ -66,7 +66,7 @@ class ResultCache:
         path = self.directory / f"{key}.json"
         if reuse and path.exists():
             record = json.loads(path.read_text(encoding="utf-8"))
-            if record["status"] == "ok" and not (
+            if record["status"] == "ok" and record.get("value") is not None and not (
                 isinstance(record.get("value"), dict) and record["value"].get("failure_reason")
             ):
                 return {**record, "execution": "reused", "original_seconds": record["seconds"], "seconds": 0.0}
@@ -77,6 +77,9 @@ class ResultCache:
             # here as well as at setup; our explicit LocalTrace still records calls.
             with tracing_context(enabled=False):
                 value = function()
+            if value is None:
+                from ai_lib.models import ExternalCallError
+                raise ExternalCallError("The call returned no structured response.")
             if isinstance(value, BaseModel):
                 value = value.model_dump()
             record = {"status": "ok", "value": value}
@@ -117,7 +120,7 @@ def paired_scores(left, right, metric):
 
 def result_summary(rows):
     frame = pd.DataFrame(rows)
-    fields = [f for f in ("correctness", "relevance", "groundedness", "retrieval_relevance",
+    fields = [f for f in ("correctness_ordinal", "correctness", "relevance", "groundedness", "retrieval_relevance",
                           "structure", "citations", "seconds") if f in frame]
     grouped = frame.groupby("method", sort=False)
     means = grouped[fields].mean()

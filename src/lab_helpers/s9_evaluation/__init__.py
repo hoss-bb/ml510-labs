@@ -133,6 +133,8 @@ def finish(run, root, finding):
         raise RuntimeError("No evaluation results were saved. Execute the experiment before finishing.")
     results = pd.read_csv(results_path)
     failed = results.status.ne("ok").any()
+    if "assessment_gate" in results:
+        failed = failed or results.assessment_gate.eq("ERROR").any()
     if "service_failure" in results:
         failed = failed or results.service_failure.fillna(False).any()
     expected_path = run.directory / "expected-cases.json"
@@ -210,9 +212,17 @@ def near_duplicate(question, accepted, index, threshold=0.95, *, vectors=None):
 
 
 def assess_result(case, docs, result, method, *, rag=False, reuse=True,
-                  cache, model_config, rubrics, evaluators, rows, answers, run):
+                  cache, model_config, rubrics, evaluators, rows, answers, run, evaluator_types=None):
     from ai_lib.evaluation import check_answer, judge_score
     from ai_lib.retrieval import format_context
+    from ai_lib.metrics import evaluator_schema
+    evaluator_types = evaluator_types or {}
+    for name, kind in evaluator_types.items():
+        evaluator_schema(kind)
+        if name not in evaluators:
+            raise ValueError(f"Unknown evaluator: {name}")
+        if kind == "ordinal" and name != "correctness":
+            raise ValueError("The S9 ordinal anchors apply to correctness only.")
     names = ["correctness", "relevance"]
     if rag:
         names += ["groundedness", "retrieval_relevance"]
@@ -222,24 +232,32 @@ def assess_result(case, docs, result, method, *, rag=False, reuse=True,
         "status": result["status"], "service_failure": bool(result.get("failure_reason")), "execution": result["execution"], "seconds": result["seconds"],
         "disposition": answer.get("disposition", "error") if result["status"] == "ok" else "error",
         **check_answer(answer, [d.metadata["passage_id"] for d in docs])}
+    from ai_lib.metrics import ordinal_score, assessment_gate
+    gate = assessment_gate(case, answer, docs) if result["status"] == "ok" else {"verdict": "ERROR", "reason": "Application execution failed"}
+    record["assessment_gate"] = gate["verdict"]
+    record["correctness_ordinal"] = None
     judgments = {}
     for name in names:
         record[name] = None
-        if result["status"] != "ok":
+        if result["status"] != "ok" or gate["verdict"] != "PASS":
             continue
         inputs = conversation_text(case)
         output = answer["answer"]
-        if name == "groundedness":
+        if name in {"groundedness", "correctness"}:
             inputs += "\nEvidence:\n" + format_context(docs)
         if name == "retrieval_relevance":
             output = format_context(docs)
         arguments = {"inputs": inputs, "outputs": output,
                      "reference_outputs": case["expected_answer"]}
         judged = cache.call(arguments, {"stage": "judge", "model": model_config["judge"],
-            "rubric": rubrics[name]}, lambda: evaluators[name](**arguments), reuse=reuse)
+            "rubric": rubrics[name], "schema": evaluator_schema(evaluator_types.get(name, "binary"))}, lambda: evaluators[name](**arguments), reuse=reuse)
         judgments[name] = judged
         if judged["status"] == "ok":
-            record[name] = judge_score(judged["value"]["score"])
+            if evaluator_types.get(name, "binary") == "ordinal":
+                record["correctness_ordinal"] = ordinal_score(judged["value"]["score"])
+                record[name] = record["correctness_ordinal"] == 3
+            else:
+                record[name] = judge_score(judged["value"]["score"])
     rows[:] = [row for row in rows if (row["case_id"], row["method"]) != (case["case_id"], method)]
     rows.append(record)
     answers[case["case_id"]+"/"+method] = {"case": case, "response": result,

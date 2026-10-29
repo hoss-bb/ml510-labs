@@ -39,6 +39,12 @@ class EvaluationTests(unittest.TestCase):
             self.assertEqual(cache.call({}, {}, fail)["status"], "error")
             self.assertEqual(cache.call({}, {}, lambda: 7)["value"], 7)
 
+    def test_missing_response(self):
+        with tempfile.TemporaryDirectory() as directory:
+            cache = ResultCache(directory)
+            self.assertEqual(cache.call({}, {}, lambda: None)["status"], "error")
+            self.assertEqual(cache.call({}, {}, lambda: {"complete": True})["status"], "ok")
+
     def test_secret_exclusion(self):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key-value"}):
             path = Path(directory)/"record.json"
