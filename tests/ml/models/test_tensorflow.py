@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import numpy as np
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.features.temporal import make_sequences
 from ml_lib.models.deep_learning import SequenceConfig, TransformerConfig, SequenceForecaster
 from ml_lib.models.ensemble import SequenceEnsemble

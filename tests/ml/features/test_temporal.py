@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import pandas as pd
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.features.temporal import lag_features, make_sequences
 
 

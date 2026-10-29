@@ -45,7 +45,7 @@ When changing reusable library behavior, run:
 python -m unittest discover -s tests -t . -v
 ```
 
-Tests maintain the shared library. Review notebook and lab-helper changes by running the affected notebooks.
+Tests are grouped under `tests/ml/` and `tests/ai/`. See the [test guide](tests/README.md) for running one library, responsibility or module. Review notebook and lab-helper changes by running the affected notebooks.
 
 ## License
 

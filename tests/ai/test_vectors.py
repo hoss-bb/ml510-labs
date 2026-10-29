@@ -9,7 +9,7 @@ from qdrant_client import QdrantClient
 
 from ai_lib.retrieval import RetrievalIndex
 from ai_lib.vector_store import QdrantIndex
-from tests.test_ai_retrieval import documents, fake_embedder
+from tests.ai.fixtures import documents, fake_embedder
 
 
 class VectorTests(unittest.TestCase):

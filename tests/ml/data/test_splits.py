@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.data.splitting import TimeSplit
 from ml_lib.features.temporal import make_sequences
 

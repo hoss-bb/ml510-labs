@@ -1,5 +1,5 @@
 import unittest
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.evaluation.diagnostics import lag_correlations
 
 

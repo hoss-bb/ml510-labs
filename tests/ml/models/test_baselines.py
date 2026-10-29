@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.models.baselines import naive_forecast, matched_baseline_splits
 
 

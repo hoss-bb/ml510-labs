@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from tests.fixtures import numeric_hourly
+from tests.ml.fixtures import numeric_hourly
 from ml_lib.data.validation import require_time_index, hourly_grid
 
 
