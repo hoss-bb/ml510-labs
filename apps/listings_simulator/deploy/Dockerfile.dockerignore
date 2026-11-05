@@ -1,0 +1,12 @@
+**
+!apps/
+!apps/listings_simulator/
+!apps/listings_simulator/requirements.txt
+!apps/listings_simulator/simulator/
+!apps/listings_simulator/simulator/**
+**/__pycache__/
+**/*.pyc
+**/.env
+**/.env.*
+
+local/

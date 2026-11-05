@@ -1,0 +1,1 @@
+Extract at most 10 relevant facts. For each use an exact source_id from the catalogue, a concise claim, and an exact nonempty excerpt. For any structured source copy its entire value. Prefer facts relevant to capacity, room/bathroom sharing, access, fees and stay conditions. Include both facts of a possible conflict. Do not list every amenity. Python will assign evidence IDs.

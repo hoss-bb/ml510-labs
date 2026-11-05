@@ -10,8 +10,8 @@ import zipfile
 import numpy as np
 from qdrant_client import QdrantClient, models
 
-from ai_lib.retrieval import RetrievalIndex
-from ai_lib.vector_store import QdrantIndex
+from ai_lib.retrieval.indexing import RetrievalIndex
+from ai_lib.retrieval.qdrant import QdrantIndex
 from lab_helpers.s8_assistant import index_directory, load_documents, raw_directory
 
 

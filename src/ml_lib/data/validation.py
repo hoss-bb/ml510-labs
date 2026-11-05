@@ -39,3 +39,27 @@ def finite_array(values, *, name: str) -> np.ndarray:
     if not result.size or not np.isfinite(result).all():
         raise ValueError(f"{name} must be non-empty and entirely finite.")
     return result
+
+
+def validate_partitions(frame, *, case_id, partition, expected_partitions, group_id=None):
+    """Return declared partitions after checking identities and optional group isolation.
+
+    Partition order comes from expected_partitions, not row order. This validates
+    an existing assignment; it neither creates splits nor assumes time ordering.
+    """
+    names = list(expected_partitions)
+    if not names or len(set(names)) != len(names) or pd.Index(names).hasnans:
+        raise ValueError("Expected partition names must be nonempty, unique and present.")
+    columns = [case_id, partition] + ([group_id] if group_id is not None else [])
+    require_columns(frame, columns)
+    if frame[columns].isna().any().any():
+        raise ValueError("Case, partition and group identities must be present.")
+    if frame[case_id].duplicated().any():
+        raise ValueError("Case IDs must be unique across partitions.")
+    if set(frame[partition]) != set(names):
+        raise ValueError("Expected nonempty declared partitions only.")
+    if group_id is not None:
+        memberships = frame.groupby(group_id, sort=False)[partition].nunique()
+        if (memberships > 1).any():
+            raise ValueError("Group identities overlap across partitions.")
+    return {name: frame.loc[frame[partition] == name].copy() for name in names}

@@ -82,7 +82,7 @@ def main():
     folder = download(root)
     if not args.download_only:
         from lab_helpers.s8_assistant import verify_data, load_documents, index_directory
-        from ai_lib.retrieval import RetrievalIndex
+        from ai_lib.retrieval.indexing import RetrievalIndex
         report = verify_data(root)
         documents = load_documents(root)
         index = RetrievalIndex(documents)
@@ -90,7 +90,7 @@ def main():
         index.prepare_model()
         if args.build_qdrant:
             from qdrant_client import QdrantClient
-            from ai_lib.vector_store import QdrantIndex
+            from ai_lib.retrieval.qdrant import QdrantIndex
             vector_folder = index_directory(root) / "qdrant"
             print("Close other clients using this local Qdrant folder before preparation.", flush=True)
             client = QdrantClient(path=str(vector_folder))

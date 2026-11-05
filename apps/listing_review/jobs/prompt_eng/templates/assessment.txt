@@ -1,0 +1,1 @@
+Assess the extracted facts. Cite evidence IDs such as e1, e2. Each conflict needs at least two different facts. Distinguish a material conflict, a specific ambiguity and useful guest conditions. Findings may be empty. Do not introduce claims absent from the extracted evidence.

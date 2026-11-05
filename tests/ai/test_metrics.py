@@ -1,5 +1,6 @@
 import unittest
-from ai_lib.metrics import lexical_scores, ordinal_score, unit_score, judge_disagreements, assessment_gate
+from ai_lib.evaluation.metrics import lexical_scores, ordinal_score, unit_score, judge_disagreements
+from ai_lib.guardrails.answers import assessment_gate
 from langchain_core.documents import Document
 
 
@@ -63,7 +64,7 @@ class MetricTests(unittest.TestCase):
 
 class EvaluatorTypeTests(unittest.TestCase):
     def test_explicit_score_contract(self):
-        from ai_lib.metrics import evaluator_schema
+        from ai_lib.evaluation.schemas import evaluator_schema
         self.assertEqual(evaluator_schema("binary"), "binary-v1")
         self.assertEqual(evaluator_schema("ordinal")["properties"]["score"]["maximum"], 3)
         with self.assertRaises(ValueError):
@@ -71,8 +72,8 @@ class EvaluatorTypeTests(unittest.TestCase):
 
     def test_cache_separates_score_contracts(self):
         import tempfile
-        from ai_lib.evaluation import ResultCache
-        from ai_lib.metrics import evaluator_schema
+        from ai_lib.experiment.caching import ResultCache
+        from ai_lib.evaluation.schemas import evaluator_schema
         with tempfile.TemporaryDirectory() as directory:
             cache = ResultCache(directory)
             binary = cache.call({"answer": "same"}, {"schema": evaluator_schema("binary")}, lambda: {"score": True})

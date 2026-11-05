@@ -14,6 +14,7 @@ Practical labs for learning to frame business problems, prepare data, build mode
 | S7 - Evaluation and experimentation | Five practical checks: validation, learning curves, group errors, behavioral expectations and decision guardrails | [Setup and lab guide](docs/s7_evaluation.md) |
 | S8 - AI application capabilities | Prompts, RAG, conversation, tools, and graphs | [Setup and lab guide](docs/s8_assistant.md) |
 | S9 - AI evaluation and controls | Answer quality, RAG diagnosis, guardrails, and middleware | [Setup and lab guide](docs/s9_evaluation.md) |
+| S10 - Model serving and applications | CPU prediction, daily arrivals, AI review chains, and Docker Compose | [Setup and lab guide](docs/s10_listings.md) |
 
 Notebook assignments are provided through the course Moodle, not GitHub. Download the lab folder (`s4_regression`, `s5_classification`, `s6_unsupervised`, `s7_evaluation`, `s8_assistant`, or `s9_evaluation`), extract it if zipped, and copy it into `notebooks/`. See the [notebook placement instructions](notebooks/README.md), then follow the relevant guide for installation and data preparation.
 
@@ -29,13 +30,20 @@ configs/           Lab data and execution settings
 data/              Local datasets and explicitly generated data
 artifacts/         Saved experiment results and models
 scripts/           Environment, data, and execution tools
+apps/              Python applications; S10 runs without notebooks
 tests/             Shared-library unit tests
 requirements.txt   Shared pinned course dependencies
 ```
 
 ## Shared environment and library
 
-All labs use the course environment defined in `requirements.txt`, which also installs the local packages. Follow the available lab guide to create the environment and select its notebook kernel.
+Reusable evaluation helpers accept application data explicitly: `ml_lib.data.validation.validate_partitions` checks declared assignments, `ml_lib.evaluation.groups.regression_group_comparisons` compares indexed predictions within supplied groups, and `ai_lib.evaluation.reports.paired_outcomes` summarizes two methods on an expected case roster. Domain groups and replacement decisions belong to the caller.
+
+`ai_lib` follows the same explicit-submodule approach as `ml_lib`: `models/` handles provider configuration and construction, `retrieval/` handles indexes and passage formatting, `evaluation/` handles judges and metrics, `guardrails/` handles checks, `tools/` supplies integrations, and `experiment/` handles caching and local traces. Import the capability directly, for example `from ai_lib.models.providers import build_chat_model`.
+
+Use the updated S8/S9 notebook copies with this layout; older copies using flat imports such as `from ai_lib.models import ...` need their imports updated. Prepared indexes and saved results do not need rebuilding for this change.
+
+The notebook labs use the course environment defined in `requirements.txt`, which also installs the local packages. S10 has a smaller application environment described in its guide. Follow the available lab guide to create the environment and select its notebook kernel.
 
 `ml_lib` provides reusable preparation, fitting, evaluation, and artifact handling. `lab_helpers` contains lab-specific data rules. Keep modeling choices visible in the notebooks and inspect detailed results in their linked artifact folders.
 

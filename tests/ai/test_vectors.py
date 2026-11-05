@@ -7,8 +7,8 @@ from unittest.mock import patch
 import numpy as np
 from qdrant_client import QdrantClient
 
-from ai_lib.retrieval import RetrievalIndex
-from ai_lib.vector_store import QdrantIndex
+from ai_lib.retrieval.indexing import RetrievalIndex
+from ai_lib.retrieval.qdrant import QdrantIndex
 from tests.ai.fixtures import documents, fake_embedder
 
 

@@ -8,8 +8,9 @@ from langchain_core.documents import Document
 from langchain_core.messages import AIMessage, HumanMessage
 import pandas as pd
 
-from ai_lib.models import load_settings, build_chat_model
-from ai_lib.recording import LocalTrace
+from ai_lib.models.configuration import load_settings
+from ai_lib.models.providers import build_chat_model
+from ai_lib.experiment.recording import LocalTrace
 from ml_lib.experiment.artifacts import RunArtifacts
 
 
@@ -162,7 +163,7 @@ def finish_run(run, title, summary):
 def open_vector_index(root, embeddings):
     """Open the prepared collection; the caller closes the returned client."""
     from qdrant_client import QdrantClient
-    from ai_lib.vector_store import QdrantIndex
+    from ai_lib.retrieval.qdrant import QdrantIndex
     folder = index_directory(root) / "qdrant"
     if not folder.exists():
         raise FileNotFoundError("Import the Moodle index with scripts/s8_qdrant.py first.")

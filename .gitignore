@@ -25,3 +25,6 @@ artifacts/*
 notebooks/*
 !notebooks/README.md
 /local-freeze*.txt
+
+
+/local/

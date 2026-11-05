@@ -1,0 +1,21 @@
+
+Constructed teaching pairs (not findings about the dataset):
+1A. accommodates=4; description='Sleeps six guests.'
+confirm_facts: cite both facts; ask whether the maximum is four or six. Do not decide which is wrong.
+1B. bedrooms=2, beds=3; 'Three beds across two bedrooms.'
+no_change: the quantities describe different things; do not invent a capacity conflict.
+
+2A. 'Parking available for an additional fee.' No amount or arrangement supplied.
+clarify_condition: ask the parking fee and whether a space must be reserved; do not invent either.
+2B. 'Optional indoor parking is $20 per night, reserved with the owner.' Also free street parking.
+no_change: different parking options coexist and the paid option is already clear.
+
+3A. One passage says 'Third floor, no elevator'; another says 'Shared bathroom'; minimum_nights=31.
+guest_note: 'Before you book: third-floor access by stairs, a shared bathroom, and a 31-night minimum.'
+Use only cited facts; this is a convenient summary, not a safety or legal assessment.
+3B. 'Private room with shared bathroom. Minimum stay: 31 nights.' Matching fields.
+no_change: the conditions are already concise and coherent; do not treat sharing as a defect.
+
+Minimum-stay pair: minimum_nights=14 and 'more than 14 nights' differ at exactly 14.
+Ask the owner which minimum is intended. 'At least 14 nights' agrees with 14;
+do not invent a conflict or require a guest note for an already-clear condition.

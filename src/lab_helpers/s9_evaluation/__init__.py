@@ -11,9 +11,12 @@ import re
 import pandas as pd
 from pydantic import BaseModel, Field
 
-from ai_lib.models import load_settings, build_chat_model
-from ai_lib.evaluation import fingerprint, save_json, ResultCache, result_summary
-from ai_lib.recording import LocalTrace
+from ai_lib.models.configuration import load_settings
+from ai_lib.models.providers import build_chat_model
+from ai_lib.experiment.serialization import fingerprint, save_json
+from ai_lib.experiment.caching import ResultCache
+from ai_lib.evaluation.reports import result_summary
+from ai_lib.experiment.recording import LocalTrace
 from ml_lib.experiment.artifacts import RunArtifacts
 from lab_helpers.s8_assistant import (project_root, raw_directory, load_tasks, load_documents,
     reference_answer, question)
@@ -213,9 +216,10 @@ def near_duplicate(question, accepted, index, threshold=0.95, *, vectors=None):
 
 def assess_result(case, docs, result, method, *, rag=False, reuse=True,
                   cache, model_config, rubrics, evaluators, rows, answers, run, evaluator_types=None):
-    from ai_lib.evaluation import check_answer, judge_score
-    from ai_lib.retrieval import format_context
-    from ai_lib.metrics import evaluator_schema
+    from ai_lib.guardrails.answers import check_answer
+    from ai_lib.evaluation.metrics import judge_score
+    from ai_lib.retrieval.formatting import format_context
+    from ai_lib.evaluation.schemas import evaluator_schema
     evaluator_types = evaluator_types or {}
     for name, kind in evaluator_types.items():
         evaluator_schema(kind)
@@ -232,7 +236,8 @@ def assess_result(case, docs, result, method, *, rag=False, reuse=True,
         "status": result["status"], "service_failure": bool(result.get("failure_reason")), "execution": result["execution"], "seconds": result["seconds"],
         "disposition": answer.get("disposition", "error") if result["status"] == "ok" else "error",
         **check_answer(answer, [d.metadata["passage_id"] for d in docs])}
-    from ai_lib.metrics import ordinal_score, assessment_gate
+    from ai_lib.evaluation.metrics import ordinal_score
+    from ai_lib.guardrails.answers import assessment_gate
     gate = assessment_gate(case, answer, docs) if result["status"] == "ok" else {"verdict": "ERROR", "reason": "Application execution failed"}
     record["assessment_gate"] = gate["verdict"]
     record["correctness_ordinal"] = None

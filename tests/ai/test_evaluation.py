@@ -6,7 +6,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import pandas as pd
-from ai_lib.evaluation import judge_score, ResultCache, check_answer, paired_scores, save_json, local_evaluation_client
+from ai_lib.evaluation.metrics import judge_score
+from ai_lib.experiment.caching import ResultCache
+from ai_lib.guardrails.answers import check_answer
+from ai_lib.evaluation.reports import paired_scores
+from ai_lib.experiment.serialization import save_json
+from ai_lib.evaluation.judges import local_evaluation_client
 
 
 class EvaluationTests(unittest.TestCase):

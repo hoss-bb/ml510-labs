@@ -161,6 +161,10 @@ The notebooks are the application's readable entry points. `ai_lib` supplies sha
 components; the S8 helper supplies MTRAG-specific examples. Prompts and application
 logic remain visible in notebook cells.
 
+Shared code uses explicit submodules such as `ai_lib.retrieval.indexing`,
+`ai_lib.retrieval.qdrant` and `ai_lib.experiment.recording`. Use the updated notebook
+copies with these imports; the existing prepared indexes remain the same.
+
 ## 4. Inspect what ran
 
 Open the artifact overview linked at the end of each notebook. Inspect answers,

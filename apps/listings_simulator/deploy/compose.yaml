@@ -1,0 +1,28 @@
+name: ml510-listings-simulator
+
+services:
+  simulator:
+    image: ml510-s10-simulator:local
+    build:
+      context: ../../..
+      dockerfile: apps/listings_simulator/deploy/Dockerfile
+    command: python -m uvicorn simulator.api:app --host 0.0.0.0 --port 8001 --no-access-log
+    environment:
+      LISTINGS_SIMULATOR_DATA: /work/simulator
+    volumes:
+      - ../../../local/listings_simulator/incoming:/work/simulator/incoming:ro
+    ports: ['${SIMULATOR_BIND_ADDRESS:-127.0.0.1}:${SIMULATOR_PORT:-8001}:8001']
+
+  publish:
+    image: ml510-s10-simulator:local
+    build:
+      context: ../../..
+      dockerfile: apps/listings_simulator/deploy/Dockerfile
+    entrypoint: [python, -m, simulator]
+    environment:
+      LISTINGS_SIMULATOR_DATA: /work/simulator
+      SIMULATOR_MODE: ${SIMULATOR_MODE:-once}
+      SIMULATOR_DAY: ${SIMULATOR_DAY:-1}
+      SIMULATOR_INTERVAL_SECONDS: ${SIMULATOR_INTERVAL_SECONDS:-60}
+    volumes:
+      - ../../../local/listings_simulator:/work/simulator

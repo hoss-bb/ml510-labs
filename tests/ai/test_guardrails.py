@@ -1,8 +1,9 @@
 """Search boundaries before and after a tool call."""
 import unittest
 from unittest.mock import Mock
-from ai_lib.models import ExternalCallError
-from ai_lib.guardrails import validate_search, search_documents, restricted_search, redact_email
+from ai_lib.models.errors import ExternalCallError
+from ai_lib.guardrails.search import validate_search, search_documents, restricted_search
+from ai_lib.guardrails.answers import redact_email
 
 
 class GuardrailTests(unittest.TestCase):
@@ -49,7 +50,7 @@ class AdditionalBoundaryTests(unittest.TestCase):
             restricted_search({"query": "IBM CLI"}, tool)
 
     def test_native_empty_search(self):
-        from ai_lib.tools import build_web_search
+        from ai_lib.tools.search import build_web_search
         from unittest.mock import patch
         with patch.dict('os.environ', {'TAVILY_API_KEY': 'synthetic-key'}):
             tool = build_web_search()
@@ -57,14 +58,14 @@ class AdditionalBoundaryTests(unittest.TestCase):
                 self.assertEqual(restricted_search({'query': 'IBM CLI'}, tool), [])
 
     def test_malformed_url(self):
-        from ai_lib.guardrails import search_documents
+        from ai_lib.guardrails.search import search_documents
         docs = search_documents({"results": [
             {"url": "https://[bad", "content": "broken"},
             {"url": "https://www.ibm.com/docs", "content": "valid"}]})
         self.assertEqual(len(docs), 1)
 
     def test_complete_proposal(self):
-        from ai_lib.guardrails import validate_tool_calls
+        from ai_lib.guardrails.search import validate_tool_calls
         call = {"id": "one", "name": "search", "args": {"query": "IBM Cloud"}}
         validate_tool_calls([call], "search")
         for calls in [[call, call], [call, {**call, "id": "two", "name": "unknown"}], [call]*3]:

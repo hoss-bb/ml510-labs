@@ -9,7 +9,8 @@ from tokenizers import Tokenizer
 from tokenizers.models import WordLevel
 from tokenizers.pre_tokenizers import Whitespace
 
-from ai_lib.retrieval import RetrievalIndex, token_windows
+from ai_lib.retrieval.indexing import RetrievalIndex
+from ai_lib.retrieval.windows import token_windows
 from tests.ai.fixtures import documents, fake_embedder
 
 

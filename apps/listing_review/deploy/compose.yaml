@@ -1,0 +1,89 @@
+name: ml510-s10
+
+services:
+  api:
+    image: ml510-s10-api:local
+    build:
+      context: ../../..
+      dockerfile: apps/listing_review/deploy/dockerfiles/Dockerfile.api
+    command: python -m uvicorn apps.listing_review.api.app:app --host 0.0.0.0 --port 8000 --no-access-log
+    environment:
+      S10_DATA: /work/local
+      S10_MODEL: /work/model
+      S10_PROMPTS: /work/prompts
+      AI_PROVIDER: gemini
+      AI_MODEL: ${AI_MODEL:-gemini-2.5-flash}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+    volumes:
+      - ../../../local/listing_review/model:/work/model:ro
+      - ../../../local/listing_review/prepared:/work/local/prepared:ro
+      - ../../../local/listing_review/prompts:/work/prompts:ro
+      - ../../../local/listing_review/state:/work/local/state
+    ports: ['127.0.0.1:8000:8000']
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+
+  data_ingest:
+    image: ml510-s10-ml:local
+    build:
+      context: ../../..
+      dockerfile: apps/listing_review/deploy/dockerfiles/Dockerfile.ml
+    command: python -m apps.listing_review.jobs.data_ingest
+    environment:
+      S10_DATA: /work/local
+      S10_MODEL: /work/model
+      S10_UPSTREAM_URL: ${S10_UPSTREAM_URL:-http://host.docker.internal:8001}
+      S10_POLL_SECONDS: ${S10_POLL_SECONDS:-15}
+    volumes:
+      - ../../../local/listing_review/model:/work/model:ro
+      - ../../../local/listing_review/state:/work/local/state
+    depends_on:
+      api: {condition: service_healthy}
+
+  ui:
+    image: ml510-s10-ui:local
+    build:
+      context: ../../..
+      dockerfile: apps/listing_review/deploy/dockerfiles/Dockerfile.ui
+    command: python -m streamlit run apps/listing_review/ui/app.py --server.address 0.0.0.0 --server.port 8501 --browser.gatherUsageStats false
+    environment:
+      S10_API_URL: http://api:8000
+    ports: ['127.0.0.1:8501:8501']
+    depends_on:
+      api: {condition: service_healthy}
+
+  # One-off jobs: run explicitly with docker compose run --rm.
+  ml_training:
+    image: ml510-s10-ml:local
+    build:
+      context: ../../..
+      dockerfile: apps/listing_review/deploy/dockerfiles/Dockerfile.ml
+    profiles: [ml_training]
+    entrypoint: [python, -m, apps.listing_review.jobs.ml_training]
+    environment:
+      S10_DATA: /work/local
+      LISTINGS_SIMULATOR_DATA: /work/simulator
+    volumes:
+      - ../../../local/listing_review:/work/local
+      - ../../../local/listings_simulator:/work/simulator
+      - ../../../artifacts:/work/artifacts
+
+  prompt_eng:
+    image: ml510-s10-ai:local
+    build:
+      context: ../../..
+      dockerfile: apps/listing_review/deploy/dockerfiles/Dockerfile.ai
+    profiles: [prompt_eng]
+    entrypoint: [python, -m, apps.listing_review.jobs.prompt_eng]
+    environment:
+      S10_DATA: /work/local
+      AI_PROVIDER: gemini
+      AI_MODEL: ${AI_MODEL:-gemini-2.5-flash}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+    volumes:
+      - ../../../local/listing_review/prompt_candidates:/work/local/prompt_candidates
+      - ../../../artifacts:/work/artifacts

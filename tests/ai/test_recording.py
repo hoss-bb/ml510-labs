@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 from langchain_core.outputs import ChatGeneration, LLMResult
-from ai_lib.recording import LocalTrace
+from ai_lib.experiment.recording import LocalTrace
 
 
 class RecordingTests(unittest.TestCase):

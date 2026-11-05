@@ -8,6 +8,8 @@ Follow the investigation: **evaluate answers - prepare cases - diagnose RAG - im
 
 Reuse the S8 environment, MTRAG Cloud data and prepared indexes. Follow the [S8 guide](s8_assistant.md) if you have not prepared them.
 
+Use the updated notebook copies: shared imports now identify their submodule, such as `ai_lib.evaluation.metrics`, `ai_lib.guardrails.answers` and `ai_lib.experiment.caching`. This reorganization does not change the prepared indexes or evaluation criteria.
+
 From the repository root, activate the environment and install the shared requirements:
 
 ```powershell

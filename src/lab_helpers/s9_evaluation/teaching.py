@@ -1,7 +1,7 @@
 """S9 recording and statement preparation; notebooks supply the criteria."""
 import json
 from pydantic import BaseModel, ConfigDict, Field
-from ai_lib.metrics import unit_score
+from ai_lib.evaluation.metrics import unit_score
 
 
 class Statement(BaseModel):
@@ -70,7 +70,7 @@ def label_units(units, evidence, rubric, *, labels, positive, cache, model,
                                [v.model_dump() for v in response.verdicts],
                                labels=labels, positive=positive, ranked=ranked)
                 except ValueError as error:
-                    from ai_lib.models import ExternalCallError
+                    from ai_lib.models.errors import ExternalCallError
                     raise ExternalCallError("The evaluator returned incomplete or invalid unit judgments.") from error
             return response
         result = required_call(cache, inputs,
@@ -90,7 +90,7 @@ def evaluate_cases(cases, method, instruction, retrieve, *, answer_case, assess,
     from uuid import uuid5, NAMESPACE_URL
     from langsmith import evaluate
     from langsmith.schemas import Example
-    from ai_lib.evaluation import fingerprint
+    from ai_lib.experiment.serialization import fingerprint
     from lab_helpers.s9_evaluation import save_rows
     register_cases(run, method, cases)
     def target(inputs):

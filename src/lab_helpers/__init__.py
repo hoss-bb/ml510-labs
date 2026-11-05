@@ -1,1 +1,1 @@
-"""Dataset preparation and examples for individual labs."""
+"""Session-specific preparation, teaching helpers and shared application logic."""

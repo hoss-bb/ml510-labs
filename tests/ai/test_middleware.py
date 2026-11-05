@@ -42,7 +42,7 @@ class MiddlewareTests(unittest.TestCase):
         self.assertIn("REDACTED",str(model.seen))
 
     def test_structured_completion(self):
-        from ai_lib.evaluation import SupportAnswer
+        from ai_lib.evaluation.schemas import SupportAnswer
         @tool
         def search(query: str) -> str:
             """Return a source passage."""

@@ -5,10 +5,22 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch, MagicMock
 
-from ai_lib.models import ModelSettings, load_settings, build_chat_model, api_error_guidance
+from ai_lib.models.configuration import ModelSettings, load_settings
+from ai_lib.models.providers import build_chat_model
+from ai_lib.models.errors import api_error_guidance, expected_call_error, ExternalCallError
 
 
 class ModelSetupTests(unittest.TestCase):
+    def test_google_wrapped_error(self):
+        from langchain_google_genai.chat_models import GoogleModelNotFoundError
+        self.assertTrue(expected_call_error(GoogleModelNotFoundError("unavailable model")))
+
+    def test_minimal_service_errors(self):
+        import sys
+        with patch.dict(sys.modules, {"groq": None, "langgraph.errors": None}):
+            self.assertTrue(expected_call_error(ExternalCallError("failed")))
+            self.assertFalse(expected_call_error(TypeError("programming error")))
+
     def test_missing_key(self):
         with patch.dict(os.environ, {}, clear=True):
             with self.assertRaisesRegex(ValueError, "GOOGLE_API_KEY"):
