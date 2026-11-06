@@ -2,7 +2,7 @@
 
 Notebook assignments are provided through the course Moodle, separately from this GitHub repository.
 
-Download the provided `s4_regression`, `s5_classification`, `s6_unsupervised`, `s7_evaluation`, or `s8_assistant` materials for your session. If they arrive as a ZIP, extract it and copy the resulting lab folder into this `notebooks/` folder. Copying the ZIP alone is not enough.
+Download the provided `s4_regression`, `s5_classification`, `s6_unsupervised`, `s7_evaluation`, `s8_assistant`, or `s9_evaluation` materials for your session. If they arrive as a ZIP, extract it and copy the resulting lab folder into this `notebooks/` folder. Copying the ZIP alone is not enough.
 
 The first notebook must be at:
 
@@ -12,6 +12,7 @@ notebooks/s5_classification/00_start_here.ipynb
 notebooks/s6_unsupervised/00_start_here.ipynb
 notebooks/s7_evaluation/00_validation.ipynb
 notebooks/s8_assistant/00_start_here.ipynb
+notebooks/s9_evaluation/00_start_here.ipynb
 ```
 
 Avoid an extra nested folder such as `s4_regression/s4_regression/` or `s5_classification/s5_classification/`. Keep each session's notebook files together so their navigation and documentation links work.
